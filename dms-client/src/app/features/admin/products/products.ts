@@ -353,17 +353,17 @@ export class Products implements OnInit {
   }
 
   resetForm(): void {
+  this.productForm.reset();
 
-    this.productForm.reset({
-      productCode: '',
-      name: '',
-      category: '',
-      unitPrice: 0,
-      availableStock: 0
-    });
+  Object.values(this.productForm.controls).forEach(control => {
+    control.markAsPristine();
+    control.markAsUntouched();
+    control.setErrors(null);
+  });
 
-    this.editingId.set(null);
+  this.productForm.updateValueAndValidity();
 
-    this.saving.set(false);
-  }
+  this.editingId.set(null);
+  this.saving.set(false);
+}
 }

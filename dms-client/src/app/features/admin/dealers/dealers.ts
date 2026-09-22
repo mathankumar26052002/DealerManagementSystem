@@ -172,8 +172,6 @@ export class Dealers implements OnInit {
 
     if (this.dealerForm.invalid) {
 
-      this.dealerForm.markAllAsTouched();
-
       return;
     }
 
@@ -321,13 +319,18 @@ export class Dealers implements OnInit {
 
       });
   }
+resetForm(): void {
+  this.dealerForm.reset();
 
-  resetForm(): void {
+  Object.values(this.dealerForm.controls).forEach(control => {
+    control.markAsPristine();
+    control.markAsUntouched();
+    control.setErrors(null);
+  });
 
-    this.dealerForm.reset();
+  this.dealerForm.updateValueAndValidity();
 
-    this.editingId.set(null);
-
-    this.saving.set(false);
-  }
+  this.editingId.set(null);
+  this.saving.set(false);
+}
 }
