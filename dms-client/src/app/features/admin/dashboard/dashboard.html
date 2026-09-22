@@ -1,0 +1,404 @@
+<div class="dashboard-container">
+
+  <!-- ========================================= -->
+  <!-- HEADER -->
+  <!-- ========================================= -->
+
+  <header class="dashboard-header">
+
+    <div class="header-left">
+
+      <div class="brand-icon">
+        A
+      </div>
+
+      <div>
+        <h1>Admin Dashboard</h1>
+
+        <p>
+          Dealer Management System
+        </p>
+      </div>
+
+    </div>
+
+
+   <div class="header-actions">
+
+  <button
+    type="button"
+    class="header-button"
+    (click)="goToDealers()">
+    Dealers
+  </button>
+
+  <button
+    type="button"
+    class="header-button"
+    (click)="goToProducts()">
+    Products
+  </button>
+
+  <button
+    type="button"
+    class="header-button"
+    (click)="goToOrders()">
+    Orders
+  </button>
+
+  <button
+    type="button"
+    class="header-button logout-button"
+    (click)="logout()">
+    Logout
+  </button>
+
+</div>
+
+  </header>
+
+
+  <!-- ========================================= -->
+  <!-- PAGE INTRO -->
+  <!-- ========================================= -->
+
+  <section class="welcome-section">
+
+    <div>
+
+      <h2>
+        Overview
+      </h2>
+
+      <p>
+        Monitor dealers, products and orders from one place.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================================= -->
+  <!-- LOADING -->
+  <!-- ========================================= -->
+
+  @if (loading()) {
+
+    <div class="loading-container">
+
+      <div class="loading-spinner"></div>
+
+      <span>
+        Loading dashboard...
+      </span>
+
+    </div>
+
+  }
+
+
+  <!-- ========================================= -->
+  <!-- ERROR -->
+  <!-- ========================================= -->
+
+  @if (errorMessage()) {
+
+    <div class="error-message">
+
+      {{ errorMessage() }}
+
+    </div>
+
+  }
+
+
+  <!-- ========================================= -->
+  <!-- DASHBOARD -->
+  <!-- ========================================= -->
+
+  @if (dashboard(); as data) {
+
+    <section class="dashboard-grid">
+
+
+      <!-- TOTAL DEALERS -->
+
+      <div class="stat-card dealers-card">
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            Total Dealers
+          </span>
+
+          <strong class="stat-value">
+            {{ data.totalDealers }}
+          </strong>
+
+          <span class="stat-description">
+            Registered dealers
+          </span>
+
+        </div>
+
+        <div class="stat-icon">
+          D
+        </div>
+
+      </div>
+
+
+      <!-- ACTIVE DEALERS -->
+
+      <div class="stat-card active-card">
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            Active Dealers
+          </span>
+
+          <strong class="stat-value">
+            {{ data.activeDealers }}
+          </strong>
+
+          <span class="stat-description">
+            Currently active
+          </span>
+
+        </div>
+
+        <div class="stat-icon">
+          ✓
+        </div>
+
+      </div>
+
+
+      <!-- TOTAL PRODUCTS -->
+
+      <div class="stat-card products-card">
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            Total Products
+          </span>
+
+          <strong class="stat-value">
+            {{ data.totalProducts }}
+          </strong>
+
+          <span class="stat-description">
+            Products available
+          </span>
+
+        </div>
+
+        <div class="stat-icon">
+          P
+        </div>
+
+      </div>
+
+
+      <!-- ACTIVE PRODUCTS -->
+
+      <div class="stat-card active-products-card">
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            Active Products
+          </span>
+
+          <strong class="stat-value">
+            {{ data.activeProducts }}
+          </strong>
+
+          <span class="stat-description">
+            Currently active
+          </span>
+
+        </div>
+
+        <div class="stat-icon">
+          ✓
+        </div>
+
+      </div>
+
+
+      <!-- SUBMITTED ORDERS -->
+
+      <div class="stat-card submitted-card">
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            Submitted Orders
+          </span>
+
+          <strong class="stat-value">
+            {{ data.submittedOrders }}
+          </strong>
+
+          <span class="stat-description">
+            Awaiting approval
+          </span>
+
+        </div>
+
+        <div class="stat-icon">
+          S
+        </div>
+
+      </div>
+
+
+      <!-- APPROVED ORDERS -->
+
+      <div class="stat-card approved-card">
+
+        <div class="stat-content">
+
+          <span class="stat-label">
+            Approved Orders
+          </span>
+
+          <strong class="stat-value">
+            {{ data.approvedOrders }}
+          </strong>
+
+          <span class="stat-description">
+            Approved orders
+          </span>
+
+        </div>
+
+        <div class="stat-icon">
+          ✓
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- ========================================= -->
+    <!-- QUICK ACTIONS -->
+    <!-- ========================================= -->
+
+    <section class="quick-actions">
+
+      <div class="section-heading">
+
+        <div>
+
+          <h2>
+            Quick Actions
+          </h2>
+
+          <p>
+            Manage your system
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="action-grid">
+
+
+        <button
+          type="button"
+          class="action-card"
+          (click)="goToDealers()">
+
+          <div class="action-icon dealer-icon">
+            D
+          </div>
+
+          <div>
+
+            <strong>
+              Manage Dealers
+            </strong>
+
+            <span>
+              Add, edit and manage dealers
+            </span>
+
+          </div>
+
+          <span class="arrow">
+            →
+          </span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="action-card"
+          (click)="goToProducts()">
+
+          <div class="action-icon product-icon">
+            P
+          </div>
+
+          <div>
+
+            <strong>
+              Manage Products
+            </strong>
+
+            <span>
+              Add and manage products
+            </span>
+
+          </div>
+
+          <span class="arrow">
+            →
+          </span>
+
+        </button>
+
+
+        <button
+          type="button"
+          class="action-card"
+          (click)="goToOrders()">
+
+          <div class="action-icon order-icon">
+            O
+          </div>
+
+          <div>
+
+            <strong>
+              Manage Orders
+            </strong>
+
+            <span>
+              Review and process orders
+            </span>
+
+          </div>
+
+          <span class="arrow">
+            →
+          </span>
+
+        </button>
+
+      </div>
+
+    </section>
+
+  }
+
+</div>

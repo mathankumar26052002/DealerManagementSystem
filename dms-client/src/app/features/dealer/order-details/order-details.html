@@ -1,0 +1,367 @@
+<div class="order-details-page">
+
+  <div class="page-header">
+
+    <div>
+      <button
+        type="button"
+        class="back-button"
+        (click)="goBack()">
+        ← Back to Orders
+      </button>
+
+      @if (order()) {
+        <h1>
+          Order {{ order()!.orderNumber }}
+        </h1>
+      }
+    </div>
+
+  </div>
+
+
+  @if (loading()) {
+
+    <div class="loading">
+      Loading order...
+    </div>
+
+  }
+
+
+  @if (errorMessage()) {
+
+    <div class="error-message">
+      {{ errorMessage() }}
+    </div>
+
+  }
+
+
+  @if (successMessage()) {
+
+    <div class="success-message">
+      {{ successMessage() }}
+    </div>
+
+  }
+
+
+  @if (!loading() && order()) {
+
+    <div class="order-header-card">
+
+      <div>
+        <span>Order Number</span>
+        <strong>
+          {{ order()!.orderNumber }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Status</span>
+
+        <strong class="status">
+          {{ order()!.status }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Created</span>
+
+        <strong>
+          {{ order()!.createdAt | date:'dd-MM-yyyy HH:mm' }}
+        </strong>
+      </div>
+
+      @if (order()!.submittedAt) {
+
+        <div>
+          <span>Submitted</span>
+
+          <strong>
+            {{ order()!.submittedAt | date:'dd-MM-yyyy HH:mm' }}
+          </strong>
+        </div>
+
+      }
+
+    </div>
+
+
+    <!-- Order Items -->
+
+    <div class="section-card">
+
+      <h2>Order Items</h2>
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Product</th>
+              <th>Unit Price</th>
+              <th>Quantity</th>
+              <th>Line Total</th>
+
+              @if (isDraft()) {
+                <th>Actions</th>
+              }
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            @for (
+              item of order()!.items;
+              track item.id
+            ) {
+
+              <tr>
+
+                <td>
+
+                     <strong>
+                    {{ item.id }}
+                  </strong>
+                  <strong>
+                    {{ item.productNameSnapshot }}
+                  </strong>
+
+                  <small>
+                    {{ item.productCodeSnapshot }}
+                  </small>
+                </td>
+
+
+                <td>
+                  ₹{{ item.unitPrice | number:'1.2-2' }}
+                </td>
+
+
+                <td>
+
+                  @if (
+                    editingItemId() === item.id
+                  ) {
+
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      [ngModel]="editingQuantity()"
+                      (ngModelChange)="editingQuantity.set($event)"
+                    />
+
+                  } @else {
+
+                    {{ item.quantity }}
+
+                  }
+
+                </td>
+
+
+                <td>
+                  ₹{{ item.lineTotal | number:'1.2-2' }}
+                </td>
+
+
+                @if (isDraft()) {
+
+                  <td>
+
+                    @if (
+                      editingItemId() === item.id
+                    ) {
+
+                      <button
+                        type="button"
+                        class="save-button"
+                        [disabled]="processing()"
+                        (click)="saveQuantity(item.id)">
+                        Save
+                      </button>
+
+                      <button
+                        type="button"
+                        class="cancel-small-button"
+                        (click)="cancelEdit()">
+                        Cancel
+                      </button>
+
+                    } @else {
+
+                      <button
+                        type="button"
+                        class="edit-button"
+                        (click)="startEdit(
+                          item.id,
+                          item.quantity
+                        )">
+                        Edit
+                      </button>
+
+                      <button
+                        type="button"
+                        class="remove-button"
+                        [disabled]="processing()"
+                        (click)="removeItem(item.id)">
+                        Remove
+                      </button>
+
+                    }
+
+                  </td>
+
+                }
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <div class="total-row">
+
+        <span>Total Amount</span>
+
+        <strong>
+          ₹{{ order()!.totalAmount | number:'1.2-2' }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- Dealer Actions -->
+
+    @if (
+      isDraft() ||
+      isSubmitted()
+    ) {
+
+      <div class="actions-card">
+
+        <h2>Order Actions</h2>
+
+        @if (isDraft()) {
+
+          <button
+            type="button"
+            class="submit-button"
+            [disabled]="processing()"
+            (click)="submitOrder()">
+
+            Submit Order
+
+          </button>
+
+        }
+
+        @if (canCancel()) {
+
+          <button
+            type="button"
+            class="cancel-order-button"
+            [disabled]="processing()"
+            (click)="cancelOrder()">
+
+            Cancel Order
+
+          </button>
+
+        }
+
+      </div>
+
+    }
+
+
+    <!-- Status History -->
+
+    <div class="section-card">
+
+      <h2>Status History</h2>
+
+      @if (
+        order()!.statusHistory?.length
+      ) {
+
+        <div class="history">
+
+          @for (
+            history of order()!.statusHistory;
+            track history.id
+          ) {
+
+            <div class="history-item">
+
+              <div class="history-status">
+
+                @if (history.previousStatus) {
+
+                  <span>
+                    {{ history.previousStatus }}
+                  </span>
+
+                  →
+                }
+
+                <strong>
+                  {{ history.newStatus }}
+                </strong>
+
+              </div>
+
+
+              <div class="history-info">
+
+                <span>
+                  {{ history.changedAt |
+                     date:'dd-MM-yyyy HH:mm' }}
+                </span>
+
+                <span>
+                  By: {{ history.changedByUsername }}
+                </span>
+
+              </div>
+
+
+              @if (history.remarks) {
+
+                <p>
+                  {{ history.remarks }}
+                </p>
+
+              }
+
+            </div>
+
+          }
+
+        </div>
+
+      } @else {
+
+        <p>No status history available.</p>
+
+      }
+
+    </div>
+
+  }
+
+</div>

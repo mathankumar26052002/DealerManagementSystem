@@ -1,0 +1,210 @@
+.order-page {
+  padding: 32px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.page-header p {
+  color: #666;
+}
+
+.order-layout {
+  display: grid;
+
+  grid-template-columns:
+    1fr 1fr;
+
+  gap: 24px;
+}
+
+.products-card,
+.order-card {
+  min-width: 0;
+}
+
+.product-list {
+  margin-top: 16px;
+}
+
+.product-row {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  padding: 16px 0;
+
+  border-bottom: 1px solid #eee;
+
+  gap: 16px;
+}
+
+.product-code {
+  font-size: 12px;
+  color: #777;
+}
+
+.product-name {
+  font-size: 17px;
+  font-weight: 600;
+
+  margin: 4px 0;
+}
+
+.product-category {
+  color: #777;
+
+  font-size: 13px;
+}
+
+.product-price {
+  margin-top: 8px;
+
+  font-weight: 600;
+}
+
+.product-stock {
+  margin-top: 4px;
+
+  font-size: 13px;
+  color: #555;
+}
+
+.empty-order {
+  padding: 40px 10px;
+
+  text-align: center;
+
+  color: #777;
+}
+
+.order-items {
+  margin-top: 16px;
+}
+
+.order-item {
+  display: grid;
+
+  grid-template-columns:
+    1fr 120px 130px auto;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 16px 0;
+
+  border-bottom: 1px solid #eee;
+}
+
+.item-details {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.item-details small {
+  color: #777;
+}
+
+.item-details span {
+  margin-top: 4px;
+
+  font-weight: 500;
+}
+
+.quantity-field {
+  width: 110px;
+}
+
+.line-total {
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.order-total {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-top: 24px;
+
+  padding-top: 20px;
+
+  border-top: 2px solid #ddd;
+
+  font-size: 20px;
+}
+
+.order-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  margin-top: 20px;
+}
+
+.loading {
+  padding: 30px;
+
+  text-align: center;
+}
+
+.error-message {
+  padding: 14px;
+
+  margin-bottom: 20px;
+
+  background: #ffebee;
+
+  color: #c62828;
+
+  border-radius: 6px;
+}
+
+.success-message {
+  padding: 14px;
+
+  margin-bottom: 20px;
+
+  background: #e8f5e9;
+
+  color: #2e7d32;
+
+  border-radius: 6px;
+}
+
+@media (max-width: 1000px) {
+
+  .order-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+
+  .order-page {
+    padding: 16px;
+  }
+
+  .order-item {
+    grid-template-columns: 1fr;
+  }
+
+  .quantity-field {
+    width: 100%;
+  }
+}

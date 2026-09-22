@@ -1,0 +1,467 @@
+<div class="order-details-page">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+
+    <button
+      type="button"
+      class="back-button"
+      (click)="goBack()">
+
+      ← Back to Orders
+
+    </button>
+
+
+    @if (order()) {
+
+      <div class="title-section">
+
+        <div>
+
+          <h1>
+            Order {{ order()!.orderNumber }}
+          </h1>
+
+          <p>
+            Order details and fulfillment management
+          </p>
+
+        </div>
+
+      </div>
+
+    }
+
+  </div>
+
+
+  <!-- LOADING -->
+
+  @if (loading()) {
+
+    <div class="loading">
+      Loading order...
+    </div>
+
+  }
+
+
+  <!-- ERROR -->
+
+  @if (
+    !loading() &&
+    errorMessage()
+  ) {
+
+    <div class="error-message">
+
+      {{ errorMessage() }}
+
+    </div>
+
+  }
+
+
+  <!-- SUCCESS -->
+
+  @if (successMessage()) {
+
+    <div class="success-message">
+
+      {{ successMessage() }}
+
+    </div>
+
+  }
+
+
+  @if (
+    !loading() &&
+    order()
+  ) {
+
+    <!-- ORDER SUMMARY -->
+
+    <div class="summary-card">
+
+      <div class="summary-item">
+
+        <span>Order Number</span>
+
+        <strong>
+          {{ order()!.orderNumber }}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-item">
+
+        <span>Dealer Code</span>
+
+        <strong>
+          {{ order()!.dealerCode }}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-item">
+
+        <span>Company</span>
+
+        <strong>
+          {{ order()!.companyName }}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-item">
+
+        <span>Status</span>
+
+        <strong class="status">
+
+          {{ order()!.status }}
+
+        </strong>
+
+      </div>
+
+
+      <div class="summary-item">
+
+        <span>Created At</span>
+
+        <strong>
+
+          {{ order()!.createdAt |
+             date:'dd-MM-yyyy HH:mm' }}
+
+        </strong>
+
+      </div>
+
+
+      <div class="summary-item">
+
+        <span>Total Amount</span>
+
+        <strong>
+
+          ₹{{ order()!.totalAmount |
+              number:'1.2-2' }}
+
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- ORDER ITEMS -->
+
+    <div class="section-card">
+
+      <div class="section-header">
+
+        <h2>Order Items</h2>
+
+      </div>
+
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>
+                Product Code
+              </th>
+
+              <th>
+                Product
+              </th>
+
+              <th>
+                Unit Price
+              </th>
+
+              <th>
+                Quantity
+              </th>
+
+              <th>
+                Line Total
+              </th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            @for (
+              item of order()!.items;
+              track item.id
+            ) {
+
+              <tr>
+
+                <td>
+
+                  {{ item.productCode }}
+
+                </td>
+
+
+                <td>
+
+                  {{ item.productName }}
+
+                </td>
+
+
+                <td>
+
+                  ₹{{ item.unitPrice |
+                      number:'1.2-2' }}
+
+                </td>
+
+
+                <td>
+
+                  {{ item.quantity }}
+
+                </td>
+
+
+                <td>
+
+                  ₹{{ item.lineTotal |
+                      number:'1.2-2' }}
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+
+      <div class="total-row">
+
+        <span>
+          Total Amount
+        </span>
+
+        <strong>
+
+          ₹{{ order()!.totalAmount |
+              number:'1.2-2' }}
+
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <!-- ADMIN ACTIONS -->
+
+    <div class="actions-card">
+
+      <h2>Order Actions</h2>
+
+
+      @if (
+        order()!.status === 'Submitted'
+      ) {
+
+        <button
+          type="button"
+          class="approve-button"
+          [disabled]="processing()"
+          (click)="approveOrder()">
+
+          Approve Order
+
+        </button>
+
+
+        <button
+            type="button"
+            class="reject-button"
+            (click)="rejectOrder()"
+            [disabled]="processing()">
+
+            Reject
+
+        </button>
+
+      }
+
+
+      @if (
+        order()!.status === 'Approved'
+      ) {
+
+        <button
+          type="button"
+          class="dispatch-button"
+          [disabled]="processing()"
+          (click)="dispatchOrder()">
+
+          Mark Dispatched
+
+        </button>
+
+      }
+
+
+      @if (
+        order()!.status === 'Dispatched'
+      ) {
+
+        <button
+          type="button"
+          class="deliver-button"
+          [disabled]="processing()"
+          (click)="deliverOrder()">
+
+          Mark Delivered
+
+        </button>
+
+      }
+
+
+      @if (
+        order()!.status !== 'Submitted' &&
+        order()!.status !== 'Approved' &&
+        order()!.status !== 'Dispatched'
+      ) {
+
+        <p class="no-actions">
+
+          No actions are available
+          for this order status.
+
+        </p>
+
+      }
+
+    </div>
+
+
+    <!-- STATUS HISTORY -->
+
+    <div class="section-card">
+
+      <div class="section-header">
+
+        <h2>Status History</h2>
+
+      </div>
+
+
+      @if (
+        order()!.statusHistory?.length
+      ) {
+
+        <div class="history-list">
+
+          @for (
+            history of order()!.statusHistory;
+            track history.id
+          ) {
+
+            <div class="history-item">
+
+              <div class="history-status">
+
+                @if (
+                  history.previousStatus
+                ) {
+
+                  <span>
+                    {{ history.previousStatus }}
+                  </span>
+
+                  <span class="arrow">
+                    →
+                  </span>
+
+                }
+
+                <strong>
+                  {{ history.newStatus }}
+                </strong>
+
+              </div>
+
+
+              <div class="history-meta">
+
+                <span>
+
+                  {{ history.changedAt |
+                     date:'dd-MM-yyyy HH:mm' }}
+
+                </span>
+
+
+                <span>
+
+                  By:
+                  {{ history.changedByUsername }}
+
+                </span>
+
+              </div>
+
+
+              @if (history.remarks) {
+
+                <div class="history-remarks">
+
+                  {{ history.remarks }}
+
+                </div>
+
+              }
+
+            </div>
+
+          }
+
+        </div>
+
+      } @else {
+
+        <p class="no-history">
+
+          No status history available.
+
+        </p>
+
+      }
+
+    </div>
+
+  }
+
+</div>

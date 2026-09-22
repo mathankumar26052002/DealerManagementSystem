@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="DMS.API/DMS.API.csproj" />
+  <Project Path="DMS.Application/DMS.Application.csproj" />
+  <Project Path="DMS.Domain/DMS.Domain.csproj" />
+  <Project Path="DMS.Infrastructure/DMS.Infrastructure.csproj" />
+  <Project Path="DMS.Tests/DMS.Tests.csproj" />
+</Solution>

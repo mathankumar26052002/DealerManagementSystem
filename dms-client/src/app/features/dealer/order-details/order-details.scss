@@ -1,0 +1,188 @@
+.order-details-page {
+  max-width: 1200px;
+  margin: auto;
+  padding: 24px;
+}
+
+.page-header {
+  margin-bottom: 20px;
+
+  h1 {
+    margin-top: 15px;
+  }
+}
+
+.back-button {
+  border: none;
+  background: transparent;
+  color: #1976d2;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.order-header-card,
+.section-card,
+.actions-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.order-header-card {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+
+  span {
+    display: block;
+    color: #777;
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+}
+
+.status {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: #e3f2fd;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 14px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+  }
+
+  th {
+    background: #f7f7f7;
+  }
+
+  small {
+    display: block;
+    color: #777;
+    margin-top: 4px;
+  }
+
+  input {
+    width: 80px;
+    padding: 7px;
+  }
+}
+
+.total-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px;
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+.actions-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  h2 {
+    margin-right: auto;
+  }
+}
+
+.submit-button,
+.save-button {
+  border: none;
+  background: #2e7d32;
+  color: white;
+  padding: 9px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-order-button,
+.remove-button {
+  border: none;
+  background: #d32f2f;
+  color: white;
+  padding: 9px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-button {
+  border: none;
+  background: #1976d2;
+  color: white;
+  padding: 7px 12px;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+
+.cancel-small-button {
+  border: 1px solid #aaa;
+  background: white;
+  padding: 7px 12px;
+  border-radius: 5px;
+}
+
+.history-item {
+  padding: 15px;
+  border-left: 3px solid #1976d2;
+  margin-bottom: 12px;
+  background: #f8f9fa;
+}
+
+.history-status {
+  font-size: 15px;
+}
+
+.history-info {
+  display: flex;
+  gap: 20px;
+  color: #777;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.loading,
+.error-message,
+.success-message {
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.success-message {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+@media (max-width: 768px) {
+
+  .order-details-page {
+    padding: 15px;
+  }
+
+  .order-header-card {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .actions-card {
+    flex-wrap: wrap;
+  }
+}

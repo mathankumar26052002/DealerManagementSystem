@@ -1,0 +1,390 @@
+<div class="product-page">
+
+  <div class="page-header">
+
+     <button
+    type="button"
+    class="back-button"
+    (click)="goBackToDashboard()">
+    ← Back to Dashboard
+  </button>
+    <div>
+      <h1>Product Management</h1>
+
+      <p>
+        Create, edit and manage products
+      </p>
+    </div>
+
+  </div>
+
+
+  @if (errorMessage()) {
+
+    <div class="error-message">
+      {{ errorMessage() }}
+    </div>
+
+  }
+
+
+  @if (successMessage()) {
+
+    <div class="success-message">
+      {{ successMessage() }}
+    </div>
+
+  }
+
+
+  <mat-card class="form-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        {{ editingId() === null
+          ? 'Create Product'
+          : 'Edit Product'
+        }}
+      </mat-card-title>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+      <form
+        [formGroup]="productForm"
+        (ngSubmit)="saveProduct()"
+      >
+
+        <div class="form-grid">
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Product Code</mat-label>
+
+            <input
+              matInput
+              formControlName="productCode"
+            />
+
+            @if (
+              productForm.controls.productCode.touched &&
+              productForm.controls.productCode.hasError('required')
+            ) {
+              <mat-error>
+                Product code is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Product Name</mat-label>
+
+            <input
+              matInput
+              formControlName="name"
+            />
+
+            @if (
+              productForm.controls.name.touched &&
+              productForm.controls.name.hasError('required')
+            ) {
+              <mat-error>
+                Product name is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Category</mat-label>
+
+            <input
+              matInput
+              formControlName="category"
+            />
+
+            @if (
+              productForm.controls.category.touched &&
+              productForm.controls.category.hasError('required')
+            ) {
+              <mat-error>
+                Category is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Unit Price</mat-label>
+
+            <input
+              matInput
+              type="number"
+              min="0.01"
+              formControlName="unitPrice"
+            />
+
+            @if (
+              productForm.controls.unitPrice.touched &&
+              productForm.controls.unitPrice.hasError('min')
+            ) {
+              <mat-error>
+                Price must be greater than 0.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Available Stock</mat-label>
+
+            <input
+              matInput
+              type="number"
+              min="0"
+              step="1"
+              formControlName="availableStock"
+            />
+
+            @if (
+              productForm.controls.availableStock.touched &&
+              productForm.controls.availableStock.hasError('min')
+            ) {
+              <mat-error>
+                Stock cannot be negative.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            mat-flat-button
+            type="submit"
+            [disabled]="saving()"
+          >
+
+            {{ editingId() === null
+              ? 'Create Product'
+              : 'Update Product'
+            }}
+
+          </button>
+
+
+          @if (editingId() !== null) {
+
+            <button
+              mat-button
+              type="button"
+              (click)="resetForm()"
+            >
+              Cancel
+            </button>
+
+          }
+
+        </div>
+
+      </form>
+
+    </mat-card-content>
+
+  </mat-card>
+
+
+  <mat-card class="table-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Products
+      </mat-card-title>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+      @if (loading()) {
+
+        <div class="loading">
+          Loading products...
+        </div>
+
+      } @else {
+
+        <div class="table-container">
+
+          <table
+            mat-table
+            [dataSource]="products()"
+          >
+
+            <ng-container matColumnDef="productCode">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Code
+              </th>
+
+              <td mat-cell *matCellDef="let product">
+                {{ product.productCode }}
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="name">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Name
+              </th>
+
+              <td mat-cell *matCellDef="let product">
+                {{ product.name }}
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="category">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Category
+              </th>
+
+              <td mat-cell *matCellDef="let product">
+                {{ product.category }}
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="unitPrice">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Unit Price
+              </th>
+
+              <td mat-cell *matCellDef="let product">
+                ₹ {{ product.unitPrice | number:'1.2-2' }}
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="availableStock">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Stock
+              </th>
+
+              <td mat-cell *matCellDef="let product">
+                {{ product.availableStock }}
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="isActive">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Status
+              </th>
+
+              <td mat-cell *matCellDef="let product">
+
+                {{ product.isActive
+                  ? 'Active'
+                  : 'Inactive'
+                }}
+
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="actions">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Actions
+              </th>
+
+              <td mat-cell *matCellDef="let product">
+
+                <button
+                  mat-button
+                  type="button"
+                  (click)="editProduct(product)"
+                >
+                  Edit
+                </button>
+
+
+                <button
+                  mat-button
+                  type="button"
+                  (click)="toggleStatus(product)"
+                >
+
+                  {{ product.isActive
+                    ? 'Deactivate'
+                    : 'Activate'
+                  }}
+
+                </button>
+
+
+                <button
+                  mat-button
+                  type="button"
+                  (click)="deleteProduct(product)"
+                >
+                  Delete
+                </button>
+
+              </td>
+
+            </ng-container>
+
+
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedColumns"
+            ></tr>
+
+            <tr
+              mat-row
+              *matRowDef="
+                let row;
+                columns: displayedColumns
+              "
+            ></tr>
+
+          </table>
+
+        </div>
+
+      }
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

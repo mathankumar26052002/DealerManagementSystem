@@ -1,0 +1,394 @@
+<div class="dealer-page">
+
+  <div class="page-header">
+
+     <button
+    type="button"
+    class="back-button"
+    (click)="goBackToDashboard()">
+    ← Back to Dashboard
+  </button>
+
+    <div>
+      <h1>Dealer Management</h1>
+
+      <p>
+        Create, edit and manage dealers
+      </p>
+    </div>
+
+  </div>
+
+
+  @if (errorMessage()) {
+
+    <div class="error-message">
+      {{ errorMessage() }}
+    </div>
+
+  }
+
+
+  @if (successMessage()) {
+
+    <div class="success-message">
+      {{ successMessage() }}
+    </div>
+
+  }
+
+
+  <mat-card class="form-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        {{ editingId() === null
+          ? 'Create Dealer'
+          : 'Edit Dealer'
+        }}
+      </mat-card-title>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+      <form
+        [formGroup]="dealerForm"
+        (ngSubmit)="saveDealer()"
+      >
+
+        <div class="form-grid">
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Dealer Code</mat-label>
+
+            <input
+              matInput
+              formControlName="dealerCode"
+            />
+
+            @if (
+              dealerForm.controls.dealerCode.touched &&
+              dealerForm.controls.dealerCode.hasError('required')
+            ) {
+              <mat-error>
+                Dealer code is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Company Name</mat-label>
+
+            <input
+              matInput
+              formControlName="companyName"
+            />
+
+            @if (
+              dealerForm.controls.companyName.touched &&
+              dealerForm.controls.companyName.hasError('required')
+            ) {
+              <mat-error>
+                Company name is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Contact Person</mat-label>
+
+            <input
+              matInput
+              formControlName="contactPerson"
+            />
+
+            @if (
+              dealerForm.controls.contactPerson.touched &&
+              dealerForm.controls.contactPerson.hasError('required')
+            ) {
+              <mat-error>
+                Contact person is required.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Email</mat-label>
+
+            <input
+              matInput
+              type="email"
+              formControlName="email"
+            />
+
+            @if (
+              dealerForm.controls.email.touched &&
+              dealerForm.controls.email.hasError('required')
+            ) {
+              <mat-error>
+                Email is required.
+              </mat-error>
+            }
+
+            @if (
+              dealerForm.controls.email.touched &&
+              dealerForm.controls.email.hasError('email')
+            ) {
+              <mat-error>
+                Enter a valid email.
+              </mat-error>
+            }
+
+          </mat-form-field>
+
+
+          <mat-form-field appearance="outline">
+
+            <mat-label>Phone</mat-label>
+
+            <input
+              matInput
+              formControlName="phone"
+            />
+
+          </mat-form-field>
+
+
+          <mat-form-field
+            appearance="outline"
+            class="address-field"
+          >
+
+            <mat-label>Address</mat-label>
+
+            <textarea
+              matInput
+              rows="3"
+              formControlName="address"
+            ></textarea>
+
+          </mat-form-field>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            mat-flat-button
+            type="submit"
+            [disabled]="saving()"
+          >
+
+            {{ editingId() === null
+              ? 'Create Dealer'
+              : 'Update Dealer'
+            }}
+
+          </button>
+
+
+          @if (editingId() !== null) {
+
+            <button
+              mat-button
+              type="button"
+              (click)="resetForm()"
+            >
+              Cancel
+            </button>
+
+          }
+
+        </div>
+
+      </form>
+
+    </mat-card-content>
+
+  </mat-card>
+
+
+  <mat-card class="table-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Dealers
+      </mat-card-title>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+      @if (loading()) {
+
+        <div class="loading">
+          Loading dealers...
+        </div>
+
+      } @else {
+
+        <div class="table-container">
+
+          <table
+            mat-table
+            [dataSource]="dealers()"
+          >
+
+            <ng-container matColumnDef="dealerCode">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Code
+              </th>
+
+              <td mat-cell *matCellDef="let dealer">
+                {{ dealer.dealerCode }}
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="companyName">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Company
+              </th>
+
+              <td mat-cell *matCellDef="let dealer">
+                {{ dealer.companyName }}
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="contactPerson">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Contact
+              </th>
+
+              <td mat-cell *matCellDef="let dealer">
+                {{ dealer.contactPerson }}
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="email">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Email
+              </th>
+
+              <td mat-cell *matCellDef="let dealer">
+                {{ dealer.email }}
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="phone">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Phone
+              </th>
+
+              <td mat-cell *matCellDef="let dealer">
+                {{ dealer.phone }}
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="isActive">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Status
+              </th>
+
+              <td mat-cell *matCellDef="let dealer">
+
+                {{ dealer.isActive
+                  ? 'Active'
+                  : 'Inactive'
+                }}
+
+              </td>
+
+            </ng-container>
+
+
+            <ng-container matColumnDef="actions">
+
+              <th mat-header-cell *matHeaderCellDef>
+                Actions
+              </th>
+
+              <td mat-cell *matCellDef="let dealer">
+
+                <button
+                  mat-button
+                  type="button"
+                  (click)="editDealer(dealer)"
+                >
+                  Edit
+                </button>
+
+
+                <button
+                  mat-button
+                  type="button"
+                  (click)="toggleStatus(dealer)"
+                >
+
+                  {{ dealer.isActive
+                    ? 'Deactivate'
+                    : 'Activate'
+                  }}
+
+                </button>
+
+              </td>
+
+            </ng-container>
+
+
+            <tr
+              mat-header-row
+              *matHeaderRowDef="displayedColumns"
+            ></tr>
+
+            <tr
+              mat-row
+              *matRowDef="
+                let row;
+                columns: displayedColumns
+              "
+            ></tr>
+
+          </table>
+
+        </div>
+
+      }
+
+    </mat-card-content>
+
+  </mat-card>
+
+</div>

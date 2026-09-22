@@ -1,0 +1,268 @@
+<div class="order-page">
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Create Order</h1>
+
+      <p>
+        Select products and create a draft order
+      </p>
+
+    </div>
+     <button
+    mat-button
+    type="button"
+    (click)="goToCatalog()"
+  >
+    ← Back to Catalog
+  </button>
+
+  </div>
+
+
+  @if (errorMessage()) {
+
+    <div class="error-message">
+      {{ errorMessage() }}
+    </div>
+
+  }
+
+
+  @if (successMessage()) {
+
+    <div class="success-message">
+      {{ successMessage() }}
+    </div>
+
+  }
+
+
+  <div class="order-layout">
+
+    <!-- Products -->
+
+    <mat-card class="products-card">
+
+      <mat-card-header>
+
+        <mat-card-title>
+          Available Products
+        </mat-card-title>
+
+      </mat-card-header>
+
+
+      <mat-card-content>
+
+        @if (loading()) {
+
+          <div class="loading">
+            Loading products...
+          </div>
+
+        } @else {
+
+          <div class="product-list">
+
+            @for (
+              product of products();
+              track product.id
+            ) {
+
+              <div class="product-row">
+
+                <div class="product-info">
+
+                  <div class="product-code">
+                    {{ product.productCode }}
+                  </div>
+
+                  <div class="product-name">
+                    {{ product.name }}
+                  </div>
+
+                  <div class="product-category">
+                    {{ product.category }}
+                  </div>
+
+                  <div class="product-price">
+                    ₹ {{ product.unitPrice | number:'1.2-2' }}
+                  </div>
+
+                  <div class="product-stock">
+                    Stock: {{ product.availableStock }}
+                  </div>
+
+                </div>
+
+
+                <button
+                  mat-flat-button
+                  type="button"
+                  (click)="addProduct(product)"
+                  [disabled]="
+                    selectedProducts()
+                      .some(x => x.id === product.id)
+                  "
+                >
+                  {{
+                    selectedProducts()
+                      .some(x => x.id === product.id)
+                      ? 'Added'
+                      : 'Add'
+                  }}
+                </button>
+
+              </div>
+
+            }
+
+          </div>
+
+        }
+
+      </mat-card-content>
+
+    </mat-card>
+
+
+    <!-- Draft Order -->
+
+    <mat-card class="order-card">
+
+      <mat-card-header>
+
+        <mat-card-title>
+          Draft Order
+        </mat-card-title>
+
+      </mat-card-header>
+
+
+      <mat-card-content>
+
+        @if (selectedProducts().length === 0) {
+
+          <div class="empty-order">
+
+            No products added yet.
+
+          </div>
+
+        } @else {
+
+          <div class="order-items">
+
+            @for (
+              product of selectedProducts();
+              track product.id
+            ) {
+
+              <div class="order-item">
+
+                <div class="item-details">
+
+                  <strong>
+                    {{ product.name }}
+                  </strong>
+
+                  <small>
+                    {{ product.productCode }}
+                  </small>
+
+                  <span>
+                    ₹ {{ product.unitPrice | number:'1.2-2' }}
+                  </span>
+
+                </div>
+
+
+                <mat-form-field
+                  appearance="outline"
+                  class="quantity-field"
+                >
+
+                  <mat-label>
+                    Quantity
+                  </mat-label>
+
+                  <input
+                    matInput
+                    type="number"
+                    min="1"
+                    [value]="getQuantity(product.id)"
+                    (input)="
+                      updateQuantity(
+                        product.id,
+                        +$any($event.target).value
+                      )
+                    "
+                  />
+
+                </mat-form-field>
+
+
+                <div class="line-total">
+
+                  ₹
+                  {{ getLineTotal(product) | number:'1.2-2' }}
+
+                </div>
+
+
+                <button
+                  mat-button
+                  type="button"
+                  (click)="removeProduct(product.id)"
+                >
+                  Remove
+                </button>
+
+              </div>
+
+            }
+
+          </div>
+
+
+          <div class="order-total">
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+              ₹ {{ getOrderTotal() | number:'1.2-2' }}
+            </strong>
+
+          </div>
+
+
+          <div class="order-actions">
+
+            <button
+              mat-flat-button
+              type="button"
+              [disabled]="saving()"
+              (click)="createDraft()"
+            >
+              {{ saving()
+                ? 'Creating...'
+                : 'Create Draft Order'
+              }}
+            </button>
+
+          </div>
+
+        }
+
+      </mat-card-content>
+
+    </mat-card>
+
+  </div>
+
+</div>

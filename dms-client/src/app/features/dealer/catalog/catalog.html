@@ -1,0 +1,435 @@
+<div class="catalog-page">
+
+  <!-- Header -->
+
+  <div class="catalog-header">
+<div class="catalog-title">
+
+  <div class="catalog-brand">
+
+    <div class="brand-icon">
+      D
+    </div>
+
+    <div>
+      <h1>Product Catalog</h1>
+
+      <p>
+        Browse products and add them to your order
+      </p>
+    </div>
+
+  </div>
+
+</div>
+
+
+  <div class="header-actions">
+
+    <!-- My Orders -->
+    <a
+      routerLink="/dealer/orders"
+      class="my-orders-button">
+      My Orders
+    </a>
+
+
+ 
+
+
+    <!-- Order -->
+    <button
+      mat-flat-button
+      type="button"
+      class="order-button"
+      (click)="openOrderSummary()"
+      [disabled]="orderItems().length === 0">
+
+      Order
+
+      @if (orderItems().length > 0) {
+
+        <span class="order-count">
+          {{ orderItems().length }}
+        </span>
+
+      }
+
+    </button>
+       <!-- Logout -->
+    <button
+      mat-flat-button
+      type="button"
+      class="logout-button"
+      (click)="logout()">
+      Logout
+    </button>
+
+  </div>
+
+</div>
+
+  <!-- Messages -->
+
+  @if (errorMessage()) {
+
+    <div class="error-message">
+      {{ errorMessage() }}
+    </div>
+
+  }
+
+
+  @if (successMessage()) {
+
+    <div class="success-message">
+      {{ successMessage() }}
+    </div>
+
+  }
+
+
+  <!-- Search -->
+
+  <mat-card class="search-card">
+
+    <div class="search-container">
+
+      <mat-form-field
+        appearance="outline"
+        class="search-field"
+      >
+
+        <mat-label>
+          Search products
+        </mat-label>
+
+        <input
+          matInput
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          (keyup.enter)="searchProducts()"
+          placeholder="Product name, code or category"
+        />
+
+      </mat-form-field>
+
+
+      <button
+        mat-flat-button
+        type="button"
+        (click)="searchProducts()"
+      >
+        Search
+      </button>
+
+
+      <button
+        mat-button
+        type="button"
+        (click)="clearSearch()"
+      >
+        Clear
+      </button>
+
+    </div>
+
+  </mat-card>
+
+
+  <!-- Products -->
+
+  @if (loading()) {
+
+    <div class="loading">
+      Loading products...
+    </div>
+
+  } @else if (products().length === 0) {
+
+    <mat-card class="no-data">
+      No products found.
+    </mat-card>
+
+  } @else {
+
+    <div class="product-grid">
+
+      @for (
+        product of products();
+        track product.id
+      ) {
+
+        <mat-card class="product-card">
+
+          <mat-card-content>
+
+            <div class="product-code">
+              {{ product.productCode }}
+            </div>
+
+
+            <h2>
+              {{ product.name }}
+            </h2>
+
+
+            <div class="category">
+              {{ product.category }}
+            </div>
+
+
+            <div class="price">
+              ₹ {{ product.unitPrice | number:'1.2-2' }}
+            </div>
+
+
+            <div class="stock">
+
+              Stock:
+              {{ product.availableStock }}
+
+            </div>
+
+
+            @if (isAdded(product.id)) {
+
+              <div class="quantity-section">
+
+                <span>
+                  Quantity
+                </span>
+
+
+                <div class="quantity-controls">
+
+                  <button
+                    mat-button
+                    type="button"
+                    (click)="decreaseQuantity(product)"
+                  >
+                    −
+                  </button>
+
+
+                  <strong>
+                    {{ getQuantity(product.id) }}
+                  </strong>
+
+
+                  <button
+                    mat-button
+                    type="button"
+                    [disabled]="
+                      getQuantity(product.id)
+                      >= product.availableStock
+                    "
+                    (click)="increaseQuantity(product)"
+                  >
+                    +
+                  </button>
+
+                </div>
+
+              </div>
+
+
+              <button
+                mat-button
+                type="button"
+                class="remove-button"
+                (click)="removeFromOrder(product.id)"
+              >
+                Remove
+              </button>
+
+            } @else {
+
+              <button
+                mat-flat-button
+                type="button"
+                class="add-button"
+                [disabled]="product.availableStock <= 0"
+                (click)="addToOrder(product)"
+              >
+                Add to Order
+              </button>
+
+            }
+
+          </mat-card-content>
+
+        </mat-card>
+
+      }
+
+    </div>
+
+  }
+
+
+  <!-- Pagination -->
+
+  @if (totalPages() > 0) {
+
+    <div class="pagination">
+
+      <button
+        mat-button
+        type="button"
+        [disabled]="pageNumber() === 1"
+        (click)="previousPage()"
+      >
+        Previous
+      </button>
+
+
+      <span>
+        Page
+        {{ pageNumber() }}
+        of
+        {{ totalPages() }}
+      </span>
+
+
+      <button
+        mat-button
+        type="button"
+        [disabled]="pageNumber() === totalPages()"
+        (click)="nextPage()"
+      >
+        Next
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- Order Summary -->
+
+  @if (showOrderSummary()) {
+
+    <div class="summary-overlay">
+
+      <mat-card class="summary-card">
+
+        <div class="summary-header">
+
+          <h2>
+            Order Summary
+          </h2>
+
+          <button
+            mat-button
+            type="button"
+            (click)="closeOrderSummary()"
+          >
+            ✕
+          </button>
+
+        </div>
+
+
+        <div class="summary-items">
+
+          @for (
+            product of orderItems();
+            track product.id
+          ) {
+
+            <div class="summary-item">
+
+              <div class="summary-product">
+
+                <strong>
+                  {{ product.name }}
+                </strong>
+
+                <small>
+                  {{ product.productCode }}
+                </small>
+
+              </div>
+
+
+              <div class="summary-quantity">
+
+                {{ getQuantity(product.id) }}
+                ×
+                ₹ {{ product.unitPrice | number:'1.2-2' }}
+
+              </div>
+
+
+              <strong>
+
+                ₹
+                {{ getLineTotal(product) | number:'1.2-2' }}
+
+              </strong>
+
+
+              <button
+                mat-button
+                type="button"
+                (click)="removeFromOrder(product.id)"
+              >
+                Remove
+              </button>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <div class="summary-total">
+
+          <span>
+            Total
+          </span>
+
+          <strong>
+            ₹ {{ getOrderTotal() | number:'1.2-2' }}
+          </strong>
+
+        </div>
+
+
+        <div class="summary-actions">
+
+          <button
+            mat-button
+            type="button"
+            (click)="closeOrderSummary()"
+          >
+            Continue Shopping
+          </button>
+
+
+          <button
+            mat-flat-button
+            type="button"
+            [disabled]="creatingOrder()"
+            (click)="createDraftOrder()"
+          >
+
+            {{
+              creatingOrder()
+                ? 'Creating...'
+                : 'Create Draft Order'
+            }}
+
+          </button>
+
+        </div>
+
+      </mat-card>
+
+    </div>
+
+  }
+
+</div>

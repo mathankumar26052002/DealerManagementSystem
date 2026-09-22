@@ -1,0 +1,230 @@
+<div class="orders-page">
+
+  <div class="page-header">
+
+    <div>
+      <h1>My Orders</h1>
+      <p>View and track your orders</p>
+    </div>
+
+    <a
+      routerLink="/dealer/catalog"
+      class="catalog-button">
+      Browse Products
+    </a>
+
+  </div>
+
+
+  <!-- Filters -->
+
+  <div class="filter-card">
+
+    <div class="search-box">
+
+      <input
+        type="text"
+        placeholder="Search by order number"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="searchOrders()"
+      />
+
+      <button
+        type="button"
+        (click)="searchOrders()">
+        Search
+      </button>
+
+    </div>
+
+
+    <div class="status-filter">
+
+      <select
+        [ngModel]="selectedStatus()"
+        (ngModelChange)="selectedStatus.set($event); changeStatus()">
+
+        <option value="">All Statuses</option>
+
+        <option value="Draft">Draft</option>
+        <option value="Submitted">Submitted</option>
+        <option value="Approved">Approved</option>
+        <option value="Dispatched">Dispatched</option>
+        <option value="Delivered">Delivered</option>
+        <option value="Rejected">Rejected</option>
+        <option value="Cancelled">Cancelled</option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      type="button"
+      class="clear-button"
+      (click)="clearSearch()">
+      Clear
+    </button>
+
+  </div>
+
+
+  <!-- Loading -->
+
+  @if (loading()) {
+
+    <div class="loading">
+      Loading orders...
+    </div>
+
+  }
+
+
+  <!-- Error -->
+
+  @if (!loading() && errorMessage()) {
+
+    <div class="error-message">
+      {{ errorMessage() }}
+    </div>
+
+  }
+
+
+  <!-- Empty -->
+
+  @if (!loading() && !errorMessage() && orders().length === 0) {
+
+    <div class="empty-state">
+
+      <h3>No orders found</h3>
+
+      <p>
+        You haven't created any orders yet.
+      </p>
+
+      <a routerLink="/dealer/catalog">
+        Browse Products
+      </a>
+
+    </div>
+
+  }
+
+
+  <!-- Orders -->
+
+  @if (!loading() && orders().length > 0) {
+
+    <div class="orders-table-wrapper">
+
+      <table class="orders-table">
+
+        <thead>
+
+          <tr>
+            <th>Order Number</th>
+            <th>Date</th>
+            <th>Items</th>
+            <th>Status</th>
+            <th>Total Amount</th>
+            <th>Action</th>
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          @for (order of orders(); track order.id) {
+
+            <tr>
+
+              <td>
+                <strong>
+                  {{ order.orderNumber }}
+                </strong>
+              </td>
+
+              <td>
+                {{ order.createdAt | date:'dd-MM-yyyy HH:mm' }}
+              </td>
+
+              <td>
+                {{ order.items?.length ?? 0 }}
+              </td>
+
+              <td>
+
+                <span
+                  class="status"
+                  [class]="getStatusClass(order.status)">
+
+                  {{ order.status }}
+
+                </span>
+
+              </td>
+
+              <td>
+                ₹{{ order.totalAmount | number:'1.2-2' }}
+              </td>
+
+              <td>
+
+                <button
+                  type="button"
+                  class="view-button"
+                  [routerLink]="['/dealer/orders', order.id]">
+
+                  View Details
+
+                </button>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- Pagination -->
+
+    <div class="pagination">
+
+      <button
+        type="button"
+        [disabled]="pageNumber() === 1"
+        (click)="previousPage()">
+
+        Previous
+
+      </button>
+
+
+      <span>
+        Page {{ pageNumber() }} of {{ totalPages() }}
+      </span>
+
+
+      <button
+        type="button"
+        [disabled]="pageNumber() >= totalPages()"
+        (click)="nextPage()">
+
+        Next
+
+      </button>
+
+    </div>
+
+  }
+
+</div>
